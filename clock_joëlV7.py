@@ -9,6 +9,7 @@ heure = None
 alarme = None
 mode_12h = False  # Par défaut, l'affichage est en mode 24 heures
 horloge_en_pause = False  # Contrôle si l'horloge est en pause
+dans_menu = False  # Contrôle si l'on est dans le menu
 
 def afficher_heure():
     """ Affiche l'heure sur une seule ligne sans retour à la ligne. """
@@ -61,6 +62,22 @@ def regler_heure():
         except ValueError:
             print("Format invalide. Essayez à nouveau.")
 
+def regler_alarme():
+    """ Permet à l'utilisateur de régler une alarme. """
+    global alarme
+    while True:
+        try:
+            heure_input = input("Réglez l'alarme au format hh:mm:ss : ")
+            heures, minutes, secondes = map(int, heure_input.split(":"))
+            if 0 <= heures < 24 and 0 <= minutes < 60 and 0 <= secondes < 60:
+                alarme = (heures, minutes, secondes)
+                print(f"Alarme réglée à : {heures:02}:{minutes:02}:{secondes:02}")
+                return
+            else:
+                print("L'heure, les minutes ou les secondes ne sont pas valides. Essayez à nouveau.")
+        except ValueError:
+            print("Format invalide. Essayez à nouveau.")
+
 def mettre_en_pause():
     """ Permet de mettre en pause ou de relancer l'horloge. """
     global horloge_en_pause
@@ -74,6 +91,8 @@ def verifier_alarme():
 
 def afficher_menu():
     """ Affiche le menu principal. """
+    global dans_menu
+    dans_menu = True  # On est maintenant dans le menu
     print("\nMenu principal :")
     print("1. Régler une nouvelle alarme")
     print("2. Régler l'heure")
@@ -95,6 +114,7 @@ def changer_mode_affichage():
 
 def menu_principal():
     """ Gère le menu principal. """
+    global dans_menu
     while True:
         afficher_menu()
         choix = input("\nEntrez votre choix : ")
@@ -105,6 +125,7 @@ def menu_principal():
         elif choix == "3":
             changer_mode_affichage()
         elif choix == "4":
+            dans_menu = False  # Sortir du menu
             break
         else:
             print("Choix invalide. Réessayez.")
@@ -117,6 +138,8 @@ def gestion_pause():
             key = msvcrt.getch()  # Récupère la touche appuyée
             if key.lower() == b'p':  # Vérifie si la touche 'p' a été pressée
                 mettre_en_pause()
+            elif key == b'\r':  # Si touche Entrée (pour ouvrir le menu)
+                menu_principal()
 
 def main():
     """ Fonction principale qui démarre l'horloge et gère le menu. """
@@ -129,7 +152,7 @@ def main():
 
     # Affichage et incrémentation de l'heure en continu
     while True:
-        if not horloge_en_pause:
+        if not horloge_en_pause and not dans_menu:  # L'heure défile seulement si on n'est pas dans le menu
             incrementer_heure()
             afficher_heure()
             verifier_alarme()
