@@ -8,7 +8,6 @@ heure = None
 alarme = None
 retour_menu = False  # Contrôle si on est dans le menu ou non
 
-
 def afficher_heure_en_continu():
     """ Fonction exécutée dans un thread pour afficher l'heure en continu """
     global heure, retour_menu
@@ -18,8 +17,15 @@ def afficher_heure_en_continu():
             afficher_heure(heure)
             verifier_alarme(heure, alarme)
         heure = incrementer_heure(heure)
+        synchroniser_heure_reelle()  # Synchronisation périodique avec l'horloge système
         time.sleep(1)
 
+def synchroniser_heure_reelle():
+    """ Synchronise l'heure affichée avec l'horloge système toutes les 60 secondes """
+    global heure
+    maintenant = datetime.now()
+    if maintenant.second == 0:  # Synchroniser toutes les minutes
+        heure = (maintenant.hour, maintenant.minute, maintenant.second)
 
 def regler_heure():
     """ Permet à l'utilisateur de régler l'heure ou d'utiliser l'heure actuelle.  """
@@ -45,15 +51,13 @@ def regler_heure():
         except ValueError:
             print("Format invalide. Essayez à nouveau.")
 
-
 def afficher_heure(heure):
-    """ Affiche l'heure au format hh:mm:ss sur une seule ligne.  """
+    """ Affiche l'heure sur une seule ligne. """
     heures, minutes, secondes = heure
-    print(f"\rHeure actuelle : {heures:02}:{minutes:02}:{secondes:02}", end="")
-
+    print(f"\r {heures:02}:{minutes:02}:{secondes:02}", end="")
 
 def incrementer_heure(heure):
-    """Incrémente l'heure d'une seconde.    """
+    """ Incrémente l'heure d'une seconde. """
     heures, minutes, secondes = heure
     secondes += 1
     if secondes == 60:
@@ -66,7 +70,6 @@ def incrementer_heure(heure):
                 heures = 0
     return heures, minutes, secondes
 
-
 def regler_alarme():
     """
     Permet à l'utilisateur de régler une alarme.
@@ -74,7 +77,7 @@ def regler_alarme():
     global alarme
     while True:
         try:
-            heure_input = input("Réglez l'alarme au format  : ")
+            heure_input = input("Réglez l'alarme au format hh:mm:ss : ")
             heures, minutes, secondes = map(int, heure_input.split(":"))
             if 0 <= heures < 24 and 0 <= minutes < 60 and 0 <= secondes < 60:
                 alarme = (heures, minutes, secondes)
@@ -85,7 +88,6 @@ def regler_alarme():
         except ValueError:
             print("Format invalide. Essayez à nouveau.")
 
-
 def verifier_alarme(heure_actuelle, alarme):
     """
     Vérifie si l'heure actuelle correspond à l'alarme.
@@ -93,7 +95,6 @@ def verifier_alarme(heure_actuelle, alarme):
     """
     if alarme and heure_actuelle == alarme:
         print("\n*** Alarme ! Il est temps ! ***")
-
 
 def afficher_menu():
     """
@@ -103,7 +104,6 @@ def afficher_menu():
     print("1. Régler une nouvelle alarme")
     print("2. Régler l'heure")
     print("3. Reprendre l'horloge")
-
 
 def menu_principal():
     """
@@ -124,7 +124,6 @@ def menu_principal():
         else:
             print("Choix invalide. Réessayez.")
 
-
 def main():
     """
     Fonction principale qui démarre l'horloge et gère le menu.
@@ -139,7 +138,6 @@ def main():
     while True:
         input("\nAppuyez sur Entrée pour ouvrir le menu...")
         menu_principal()
-
 
 if __name__ == "__main__":
     main()
