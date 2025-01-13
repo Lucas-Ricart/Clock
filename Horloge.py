@@ -15,7 +15,7 @@ mode_12h = False
 horloge_en_pause = False
 
 # Charger le son de l'alarme (remplacez ce chemin par le vôtre)
-son_alarme = pygame.mixer.Sound("Reveille.mp3")
+son_alarme = pygame.mixer.Sound("Son_reveille.mp3")
 
 # Configurer CustomTkinter
 ctk.set_appearance_mode("dark")  # Modes : "dark", "light", "system"
@@ -163,8 +163,5 @@ thread_horloge = threading.Thread(target=loop_horloge, daemon=True)
 thread_horloge.start()
 
 # Lancer l'interface graphique
-<<<<<<< HEAD
 root.mainloop()
-=======
 root.mainloop()
->>>>>>> joel
