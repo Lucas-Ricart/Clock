@@ -163,4 +163,8 @@ thread_horloge = threading.Thread(target=loop_horloge, daemon=True)
 thread_horloge.start()
 
 # Lancer l'interface graphique
+<<<<<<< HEAD
 root.mainloop()
+=======
+root.mainloop()
+>>>>>>> joel
